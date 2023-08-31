@@ -13,7 +13,6 @@ function currencies() {
     "Swiss Franc": "CHF",
     "Icelandic Krona": "ISK",
     "Norwegian Krone": "NOK",
-    "Coratian Kuna": "HRK",
     "Russian Ruble": "RUB",
     "Turkish Lira": "TRY",
     "Australian Dollar": "AUD",

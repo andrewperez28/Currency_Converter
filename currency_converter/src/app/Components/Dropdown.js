@@ -7,9 +7,13 @@ export default function Dropdown(props) {
     <>
       <legend className="text-4xl p-2 mb-4">{props.label}</legend>
       <select className="text-black mx-auto p-2 mb-4 text-4xl">
-        <option value="">--Select a Currency--</option>
+        <option value="" className="text-center">
+          --Select a Currency--
+        </option>
         {currencyList.map((val) => (
-          <option value={val}>{val}</option>
+          <option value={val} className="text-center">
+            {val}
+          </option>
         ))}
       </select>
     </>
