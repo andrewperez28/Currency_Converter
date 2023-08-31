@@ -15,7 +15,7 @@ export default function Home() {
             Welcome to the currency converter website!{" "}
           </h2>
           <h3 className="text-3xl p-4">
-            Please choose a base currency and a target currency used for
+            Please choose a base currency and a target currency to be used for
             conversion.
           </h3>
         </div>
