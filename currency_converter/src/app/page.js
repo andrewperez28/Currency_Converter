@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Dropdown from "./Components/Dropdown";
 import PriceEntry from "./Components/PriceEntry";
 
@@ -26,21 +25,9 @@ export default function Home() {
       <div className="flex justify-around">
         <div className="flex flex-col items-center p-4">
           <Dropdown label="Base Currency" />
-          <Image
-            src="/Images/usa-flag-medium.jpg"
-            layout="intrinsic"
-            width={400}
-            height={400}
-          />
         </div>
         <div className="flex flex-col items-center p-4">
           <Dropdown label="Target Currency" />
-          <Image
-            src="/Images/canada-flag-medium.jpg"
-            layout="intrinsic"
-            width={400}
-            height={400}
-          />
         </div>
       </div>
       <div className="flex justify-around">
