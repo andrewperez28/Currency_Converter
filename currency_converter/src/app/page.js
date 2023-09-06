@@ -1,7 +1,23 @@
+"use client";
+import { useState } from "react";
 import Dropdown from "./Components/Dropdown";
 import PriceEntry from "./Components/PriceEntry";
 
 export default function Home() {
+  const [baseSelection, setBaseSelection] = useState("");
+  const [targetSelection, setTargetSelection] = useState("");
+
+  console.log(`Base Selection is: ${baseSelection}`);
+  console.log(`Target Selection is: ${targetSelection}`);
+
+  const handleBaseSelection = (e) => {
+    setBaseSelection(e.target.value);
+  };
+
+  const handleTargetSelection = (e) => {
+    setTargetSelection(e.target.value);
+  };
+
   return (
     <>
       <header>
@@ -24,10 +40,18 @@ export default function Home() {
 
       <div className="flex justify-around">
         <div className="flex flex-col items-center p-4">
-          <Dropdown label="Base Currency" />
+          <Dropdown
+            label="Base Currency"
+            selectedValue={targetSelection}
+            stateFunction={handleBaseSelection}
+          />
         </div>
         <div className="flex flex-col items-center p-4">
-          <Dropdown label="Target Currency" />
+          <Dropdown
+            label="Target Currency"
+            selectedValue={baseSelection}
+            stateFunction={handleTargetSelection}
+          />
         </div>
       </div>
       <div className="flex justify-around">

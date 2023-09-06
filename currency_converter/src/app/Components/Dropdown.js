@@ -4,31 +4,42 @@ import currencies from "../Objects/currencies";
 import Flag from "./Flag";
 
 export default function Dropdown(props) {
-  const [selection, setSelection] = useState("");
+  const [dropSelection, setDropSelection] = useState("");
+  const filteredCurrency = props.selectedValue;
+  const useStateFunction = props.stateFunction;
   const currenciesObject = currencies();
-  const currencyList = Object.keys(currenciesObject);
+  const currencyList = Object.keys(currenciesObject).filter(
+    (currency) => currency != filteredCurrency
+  );
 
-  const handleSelection = (e) => {
-    setSelection(e.target.value);
+  console.log(`fileteredCurrency is: ${filteredCurrency}`);
+
+  const handleDropSelection = (e) => {
+    setDropSelection(e.target.value);
   };
 
   return (
     <>
       <legend className="text-4xl p-2 mb-4">{props.label}</legend>
       <select
-        onChange={handleSelection}
+        onChange={(e) => {
+          handleDropSelection(e);
+          useStateFunction(e);
+        }}
         className="text-black mx-auto p-2 mb-4 text-4xl"
       >
         <option value="" className="text-center">
           --Select a Currency--
         </option>
         {currencyList.map((val) => (
-          <option value={val} className="text-center">
+          <option key={val} value={val} className="text-center">
             {val}
           </option>
         ))}
       </select>
-      {selection in currenciesObject ? <Flag label={selection} /> : null}
+      {dropSelection in currenciesObject ? (
+        <Flag label={dropSelection} />
+      ) : null}
     </>
   );
 }

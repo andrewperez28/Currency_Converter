@@ -12,6 +12,7 @@ export default function Flag(props) {
         src={`/Images/${flagOption}-flag-medium.jpg`}
         width={400}
         height={400}
+        alt={`Flag of ${flagOption}`}
       />
     </>
   );
