@@ -16,6 +16,7 @@ export default function Dropdown(props) {
 
   const handleDropSelection = (e) => {
     setDropSelection(e.target.value);
+    useStateFunction(e);
   };
 
   return (
@@ -24,7 +25,6 @@ export default function Dropdown(props) {
       <select
         onChange={(e) => {
           handleDropSelection(e);
-          useStateFunction(e);
         }}
         className="text-black mx-auto p-2 mb-4 text-4xl"
       >

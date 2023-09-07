@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import CurrencySwapButton from "./Components/CurrencySwap";
 import Dropdown from "./Components/Dropdown";
 import PriceEntry from "./Components/PriceEntry";
 
@@ -16,6 +17,11 @@ export default function Home() {
 
   const handleTargetSelection = (e) => {
     setTargetSelection(e.target.value);
+  };
+
+  const handleCurrencySwap = () => {
+    setBaseSelection(targetSelection);
+    setTargetSelection(baseSelection);
   };
 
   return (
@@ -46,12 +52,17 @@ export default function Home() {
             stateFunction={handleBaseSelection}
           />
         </div>
+        <div className="flex items-center p-4">
+          <CurrencySwapButton onSwap={handleCurrencySwap} />
+        </div>
         <div className="flex flex-col items-center p-4">
-          <Dropdown
-            label="Target Currency"
-            selectedValue={baseSelection}
-            stateFunction={handleTargetSelection}
-          />
+          <div className="flex flex-col items-center p-4">
+            <Dropdown
+              label="Target Currency"
+              selectedValue={baseSelection}
+              stateFunction={handleTargetSelection}
+            />
+          </div>
         </div>
       </div>
       <div className="flex justify-around">
