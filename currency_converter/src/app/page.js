@@ -5,23 +5,32 @@ import Dropdown from "./Components/Dropdown";
 import PriceEntry from "./Components/PriceEntry";
 
 export default function Home() {
-  const [baseSelection, setBaseSelection] = useState("");
-  const [targetSelection, setTargetSelection] = useState("");
+  console.log("----------------PARENT COMPONENT RENDERED!!!!--------------");
+  const [baseSelection, setBaseSelection] = useState();
+  const [targetSelection, setTargetSelection] = useState();
+  const [swap, setSwap] = useState(0);
 
-  console.log(`Base Selection is: ${baseSelection}`);
-  console.log(`Target Selection is: ${targetSelection}`);
+  console.log(`baseSelection is: ${baseSelection}`);
+  console.log(`targetSelection is: ${targetSelection}`);
 
   const handleBaseSelection = (e) => {
-    setBaseSelection(e.target.value);
+    console.log(`e of handleBaseSelection is: ${e}`);
+    setBaseSelection(e);
   };
 
   const handleTargetSelection = (e) => {
-    setTargetSelection(e.target.value);
+    setTargetSelection(e);
+  };
+
+  const handleSwap = () => {
+    setSwap((swap) => swap + 1);
   };
 
   const handleCurrencySwap = () => {
+    console.log("SWAP ACTIVATED!!!");
     setBaseSelection(targetSelection);
     setTargetSelection(baseSelection);
+    handleSwap();
   };
 
   return (
@@ -41,6 +50,7 @@ export default function Home() {
             Please choose a base currency and a target currency to be used for
             conversion. Then enter your prices in at least one input box.
           </h3>
+          <p>Number of times "Swap Currencies" has been pressed: {swap}</p>
         </div>
       </div>
 
@@ -48,21 +58,23 @@ export default function Home() {
         <div className="flex flex-col items-center p-4">
           <Dropdown
             label="Base Currency"
-            selectedValue={targetSelection}
+            selectedValue={baseSelection}
+            opposingValue={targetSelection}
             stateFunction={handleBaseSelection}
+            swap={swap}
           />
         </div>
         <div className="flex items-center p-4">
           <CurrencySwapButton onSwap={handleCurrencySwap} />
         </div>
         <div className="flex flex-col items-center p-4">
-          <div className="flex flex-col items-center p-4">
-            <Dropdown
-              label="Target Currency"
-              selectedValue={baseSelection}
-              stateFunction={handleTargetSelection}
-            />
-          </div>
+          <Dropdown
+            label="Target Currency"
+            selectedValue={targetSelection}
+            opposingValue={baseSelection}
+            stateFunction={handleTargetSelection}
+            swap={swap}
+          />
         </div>
       </div>
       <div className="flex justify-around">
