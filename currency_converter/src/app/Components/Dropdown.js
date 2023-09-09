@@ -1,6 +1,5 @@
 "use client";
 import currencies from "../Objects/currencies";
-import Flag from "./Flag";
 
 export default function Dropdown(props) {
   console.log(
@@ -39,9 +38,6 @@ export default function Dropdown(props) {
           </option>
         ))}
       </select>
-      {props.selectedValue in currenciesObject ? (
-        <Flag label={props.selectedValue} />
-      ) : null}
     </>
   );
 }
