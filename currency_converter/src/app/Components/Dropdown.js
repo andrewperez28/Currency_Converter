@@ -22,7 +22,7 @@ export default function Dropdown(props) {
     <>
       <legend className="text-4xl p-2 mb-4">{props.label}</legend>
       <select
-        value={props.selectedValue}
+        value={props.selectedValue || ""}
         onChange={(e) => {
           console.log(`e.target.value is: ${e.target.value}`);
           handleDropSelection(e);

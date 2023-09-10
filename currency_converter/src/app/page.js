@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CurrencySwapButton from "./Components/CurrencySwap";
 import Dropdown from "./Components/Dropdown";
 import PriceEntry from "./Components/PriceEntry";
@@ -9,17 +9,21 @@ import currencies from "./Objects/currencies";
 export default function Home() {
   const currenciesObject = currencies();
   console.log("----------------PARENT COMPONENT RENDERED!!!!--------------");
-  const [baseSelection, setBaseSelection] = useState();
-  const [targetSelection, setTargetSelection] = useState();
+  const [baseSelection, setBaseSelection] = useState("--Select a Currency--");
+  const [targetSelection, setTargetSelection] = useState(
+    "--Select a Currency--"
+  );
   const [swap, setSwap] = useState(0);
-  const [basePrice, setBasePrice] = useState();
-  const [targetPrice, setTargetPrice] = useState();
+  const [basePrice, setBasePrice] = useState("");
+  const [targetPrice, setTargetPrice] = useState("");
+
+  const [baseTargetExch, setBaseTargetExch] = useState(0);
+  const [targetBaseExch, setTargetBaseExch] = useState(0);
 
   console.log(`baseSelection is: ${baseSelection}`);
   console.log(`targetSelection is: ${targetSelection}`);
 
   const handleBaseSelection = (e) => {
-    console.log(`e of handleBaseSelection is: ${e}`);
     setBaseSelection(e);
   };
 
@@ -39,12 +43,27 @@ export default function Home() {
   };
 
   const handleBasePrice = (e) => {
-    setBasePrice(e);
+    setBasePrice(e.target.value);
   };
 
   const handleTargetPrice = (e) => {
-    setTargetPrice(e);
+    setTargetPrice(e.target.value);
   };
+
+  useEffect(() => {
+    if (
+      baseSelection != "--Select a Currency--" &&
+      targetSelection != "--Select a Currency--"
+    ) {
+      console.log(
+        "API IS BEING CALLED!!!! baseSelection and targetSelection are not empty!"
+      );
+    } else {
+      console.log(
+        "API is NOT being called. Either baseSelection or targetSelection is empty or both are empty."
+      );
+    }
+  }, [baseSelection, targetSelection]);
 
   return (
     <>
@@ -110,7 +129,7 @@ export default function Home() {
           <PriceEntry
             label="Base Price"
             id="base"
-            name="basePrice"
+            value={basePrice}
             className="mb-4 mt-4"
             onChange={handleBasePrice}
           />
@@ -119,7 +138,7 @@ export default function Home() {
           <PriceEntry
             label="Target Price"
             id="target"
-            name="targetPrice"
+            value={targetPrice}
             className="mb-4 mt-4"
             onChange={handleTargetPrice}
           />
