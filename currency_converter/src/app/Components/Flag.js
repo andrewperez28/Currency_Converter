@@ -1,5 +1,5 @@
-import currencies from "../Objects/currencies";
 import Image from "next/image";
+import currencies from "../Objects/currencies";
 
 export default function Flag(props) {
   const currenciesObject = currencies();

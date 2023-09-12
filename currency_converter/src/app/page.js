@@ -4,6 +4,7 @@ import CurrencySwapButton from "./Components/CurrencySwap";
 import Dropdown from "./Components/Dropdown";
 import PriceEntry from "./Components/PriceEntry";
 import Flag from "./Components/Flag";
+import Remaining from "./Components/Remaining";
 import currencies from "./Objects/currencies";
 
 export default function Home() {
@@ -19,6 +20,8 @@ export default function Home() {
 
   const [baseTargetExch, setBaseTargetExch] = useState(0);
   const [targetBaseExch, setTargetBaseExch] = useState(0);
+
+  const [remaining, setRemaining] = useState(0);
 
   console.log(`baseSelection is: ${baseSelection}`);
   console.log(`targetSelection is: ${targetSelection}`);
@@ -48,6 +51,10 @@ export default function Home() {
 
   const handleTargetPrice = (e) => {
     setTargetPrice(e.target.value);
+  };
+
+  const handleRemaining = (e) => {
+    setRemaining(e);
   };
 
   useEffect(() => {
@@ -144,7 +151,7 @@ export default function Home() {
           />
         </div>
       </div>
-
+      <Remaining remaining={remaining} updateFunction={handleRemaining} />
       <footer className="mt-auto flex justify-center text-1xl">
         © 2023 Andrew Perez
       </footer>
