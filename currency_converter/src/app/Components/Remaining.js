@@ -1,17 +1,30 @@
 import { useEffect } from "react";
-import getRemaining from "../Scripts/getRemaining.mjs";
 
 export default function Remaining(props) {
+  const updateRemaining = props.updateFunction;
+  const serverUrl = "http://localhost:3001";
+
   useEffect(() => {
-    // Call the getRemaining function and update the remaining state
-    const currentRemaining = getRemaining();
-    console.log(`CURRENT REMAINING IS: ${currentRemaining}`);
-    props.updateFunction(currentRemaining);
-  }, []); // Empty dependency array to ensure this effect runs once on mount
+    fetch(`${serverUrl}/remaining`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error with backend");
+        }
+        return response.json();
+      })
+      .then((response) => {
+        if (response.remaining !== props.remaining) {
+          updateRemaining(parseInt(response));
+        }
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+  }, []);
 
   return (
     <>
-      <p>Number of Requests Remaining: {props.remaining}</p>
+      <p>Number of requests remaining: {props.remaining}</p>
     </>
   );
 }

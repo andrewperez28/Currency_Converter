@@ -21,7 +21,7 @@ export default function Home() {
   const [baseTargetExch, setBaseTargetExch] = useState(0);
   const [targetBaseExch, setTargetBaseExch] = useState(0);
 
-  const [remaining, setRemaining] = useState(0);
+  const [remaining, setRemaining] = useState(5000);
 
   console.log(`baseSelection is: ${baseSelection}`);
   console.log(`targetSelection is: ${targetSelection}`);
@@ -151,7 +151,10 @@ export default function Home() {
           />
         </div>
       </div>
-      <Remaining remaining={remaining} updateFunction={handleRemaining} />
+      <div className="flex justify-center">
+        <Remaining remaining={remaining} updateFunction={handleRemaining} />
+      </div>
+
       <footer className="mt-auto flex justify-center text-1xl">
         © 2023 Andrew Perez
       </footer>

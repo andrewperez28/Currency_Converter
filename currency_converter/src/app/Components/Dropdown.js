@@ -2,9 +2,9 @@
 import currencies from "../Objects/currencies";
 
 export default function Dropdown(props) {
-  console.log(
-    `DROPDOWN COMPONENT RENDERED! This is Component '${props.label}'`
-  );
+  // console.log(
+  //   `DROPDOWN COMPONENT RENDERED! This is Component '${props.label}'`
+  // );
   const filteredCurrency = props.opposingValue;
   const useStateFunction = props.stateFunction;
   const currenciesObject = currencies();
@@ -12,7 +12,7 @@ export default function Dropdown(props) {
     (currency) => currency != filteredCurrency
   );
 
-  console.log(`fileteredCurrency is: ${filteredCurrency}`);
+  // console.log(`fileteredCurrency is: ${filteredCurrency}`);
 
   const handleDropSelection = (e) => {
     useStateFunction(e.target.value);
