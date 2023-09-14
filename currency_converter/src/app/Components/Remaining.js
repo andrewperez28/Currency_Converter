@@ -14,7 +14,7 @@ export default function Remaining(props) {
       })
       .then((response) => {
         if (response.remaining !== props.remaining) {
-          updateRemaining(parseInt(response));
+          updateRemaining(response.remaining);
         }
       })
       .catch((error) => {
