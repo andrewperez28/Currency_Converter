@@ -1,21 +1,31 @@
-import dotenv from "dotenv";
-dotenv.config();
+import currencies from "../Objects/currencies";
 
-import Freecurrencyapi from "@everapi/freecurrencyapi-js";
+export default function getExchange(currentBase, currentTarget) {
+  return new Promise((resolve, reject) => {
+    console.log(`currentBase is: ${currentBase}`);
+    const currenciesObject = currencies();
+    const baseCode = currenciesObject[currentBase][0];
+    const targetCode = currenciesObject[currentTarget][0];
 
-export default async function getExchange(baseCode, targetCode) {
-  const apiKey = process.env.API_KEY;
-  const freecurrencyapi = new Freecurrencyapi(apiKey);
+    console.log(`baseCode is: ${baseCode}`);
+    console.log(`targetCode is: ${targetCode}`);
 
-  try {
-    const response = await freecurrencyapi.latest({
-      base_currency: baseCode,
-      currencies: targetCode,
-    });
-
-    const exchangeValue = response.data[targetCode];
-    return exchangeValue;
-  } catch (error) {
-    console.error(`ERROR: ${error}`);
-  }
+    fetch(
+      `http://localhost:3001/exchange?base=${baseCode}&target=${targetCode}`
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error with backend");
+        }
+        return response.json();
+      })
+      .then((response) => {
+        // Resolve the promise with the array containing the two elements
+        resolve(response);
+      })
+      .catch((error) => {
+        // Reject the promise with an error if there's an issue
+        reject(error);
+      });
+  });
 }

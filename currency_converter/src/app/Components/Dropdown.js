@@ -2,17 +2,12 @@
 import currencies from "../Objects/currencies";
 
 export default function Dropdown(props) {
-  // console.log(
-  //   `DROPDOWN COMPONENT RENDERED! This is Component '${props.label}'`
-  // );
   const filteredCurrency = props.opposingValue;
   const useStateFunction = props.stateFunction;
   const currenciesObject = currencies();
   const currencyList = Object.keys(currenciesObject).filter(
     (currency) => currency != filteredCurrency
   );
-
-  // console.log(`fileteredCurrency is: ${filteredCurrency}`);
 
   const handleDropSelection = (e) => {
     useStateFunction(e.target.value);
@@ -24,7 +19,6 @@ export default function Dropdown(props) {
       <select
         value={props.selectedValue || ""}
         onChange={(e) => {
-          console.log(`e.target.value is: ${e.target.value}`);
           handleDropSelection(e);
         }}
         className="text-black mx-auto p-2 mb-4 text-4xl"

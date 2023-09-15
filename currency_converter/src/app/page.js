@@ -6,6 +6,7 @@ import PriceEntry from "./Components/PriceEntry";
 import Flag from "./Components/Flag";
 import Remaining from "./Components/Remaining";
 import currencies from "./Objects/currencies";
+import getExchange from "./Scripts/getExchange.mjs";
 
 export default function Home() {
   const currenciesObject = currencies();
@@ -14,14 +15,29 @@ export default function Home() {
   const [targetSelection, setTargetSelection] = useState(
     "--Select a Currency--"
   );
-  const [swap, setSwap] = useState(0);
   const [basePrice, setBasePrice] = useState("");
   const [targetPrice, setTargetPrice] = useState("");
 
   const [baseTargetExch, setBaseTargetExch] = useState(0);
   const [targetBaseExch, setTargetBaseExch] = useState(0);
 
-  const [remaining, setRemaining] = useState(5000);
+  const [remaining, setRemaining] = useState("Loading...");
+
+  useEffect(() => {
+    fetch("http://localhost:3001/remaining")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error with backend");
+        }
+        return response.json();
+      })
+      .then((response) => {
+        setRemaining(response.remaining); // Set the remaining value in the state
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+  }, []); // Empty dependency array to fetch once on component mount
 
   console.log(`baseSelection is: ${baseSelection}`);
   console.log(`targetSelection is: ${targetSelection}`);
@@ -34,15 +50,10 @@ export default function Home() {
     setTargetSelection(e);
   };
 
-  const handleSwap = () => {
-    setSwap((swap) => swap + 1);
-  };
-
   const handleCurrencySwap = () => {
     console.log("SWAP ACTIVATED!!!");
     setBaseSelection(targetSelection);
     setTargetSelection(baseSelection);
-    handleSwap();
   };
 
   const handleBasePrice = (e) => {
@@ -53,24 +64,37 @@ export default function Home() {
     setTargetPrice(e.target.value);
   };
 
-  const handleRemaining = (e) => {
-    setRemaining(e);
+  const handleRemaining = (remaining) => {
+    setRemaining(remaining - 2);
   };
 
   useEffect(() => {
-    if (
-      baseSelection != "--Select a Currency--" &&
-      targetSelection != "--Select a Currency--"
-    ) {
-      console.log(
-        "API IS BEING CALLED!!!! baseSelection and targetSelection are not empty!"
-      );
-    } else {
-      console.log(
-        "API is NOT being called. Either baseSelection or targetSelection is empty or both are empty."
-      );
-    }
+    const fetchExchangeData = async () => {
+      if (
+        baseSelection !== "--Select a Currency--" &&
+        targetSelection !== "--Select a Currency--"
+      ) {
+        console.log("WE'RE CALLING THE API!!!!!!!!");
+        try {
+          const [baseTargetExch, targetBaseExch] = await getExchange(
+            baseSelection,
+            targetSelection
+          );
+          setBaseTargetExch(baseTargetExch);
+          setTargetBaseExch(targetBaseExch);
+          handleRemaining(remaining);
+        } catch (error) {
+          // Handle any errors that may occur during the fetch
+          console.error(error);
+        }
+      }
+    };
+
+    fetchExchangeData();
   }, [baseSelection, targetSelection]);
+
+  console.log("baseTargetExch: ", baseTargetExch);
+  console.log("targetBaseExch: ", targetBaseExch);
 
   return (
     <>
@@ -89,7 +113,6 @@ export default function Home() {
             Please choose a base currency and a target currency to be used for
             conversion. Then enter your prices in at least one input box.
           </h3>
-          <p>Number of times "Swap Currencies" has been pressed: {swap}</p>
         </div>
       </div>
 
@@ -100,7 +123,6 @@ export default function Home() {
             selectedValue={baseSelection}
             opposingValue={targetSelection}
             stateFunction={handleBaseSelection}
-            swap={swap}
           />
           <div className="flex flex-col items-center p-4">
             {baseSelection in currenciesObject ? (
@@ -122,7 +144,6 @@ export default function Home() {
             selectedValue={targetSelection}
             opposingValue={baseSelection}
             stateFunction={handleTargetSelection}
-            swap={swap}
           />
           <div className="flex flex-col items-center p-4">
             {targetSelection in currenciesObject ? (
@@ -152,7 +173,7 @@ export default function Home() {
         </div>
       </div>
       <div className="flex justify-center">
-        <Remaining remaining={remaining} updateFunction={handleRemaining} />
+        <Remaining remaining={remaining} />
       </div>
 
       <footer className="mt-auto flex justify-center text-1xl">
