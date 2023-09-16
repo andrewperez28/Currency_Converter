@@ -7,6 +7,7 @@ import Flag from "./Components/Flag";
 import Remaining from "./Components/Remaining";
 import currencies from "./Objects/currencies";
 import getExchange from "./Scripts/getExchange.mjs";
+import BigNumber from "bignumber.js";
 
 export default function Home() {
   const currenciesObject = currencies();
@@ -15,11 +16,11 @@ export default function Home() {
   const [targetSelection, setTargetSelection] = useState(
     "--Select a Currency--"
   );
-  const [basePrice, setBasePrice] = useState("");
-  const [targetPrice, setTargetPrice] = useState("");
+  const [basePrice, setBasePrice] = useState(new BigNumber(0));
+  const [targetPrice, setTargetPrice] = useState(new BigNumber(0));
 
-  const [baseTargetExch, setBaseTargetExch] = useState(0);
-  const [targetBaseExch, setTargetBaseExch] = useState(0);
+  const [baseTargetExch, setBaseTargetExch] = useState(new BigNumber(0));
+  const [targetBaseExch, setTargetBaseExch] = useState(new BigNumber(0));
 
   const [remaining, setRemaining] = useState("Loading...");
 
@@ -64,37 +65,53 @@ export default function Home() {
   };
 
   const handleBasePrice = (e) => {
-    setBasePrice(e.target.value);
+    const newValue = new BigNumber(e.target.value);
+    setBasePrice(newValue);
+
+    // Update the targetPrice when basePrice changes
+    if (!newValue.isNaN() && !baseTargetExch.isNaN()) {
+      const calculatedValue = newValue
+        .multipliedBy(baseTargetExch)
+        .decimalPlaces(2);
+      setTargetPrice(calculatedValue);
+    }
   };
 
   const handleTargetPrice = (e) => {
-    setTargetPrice(e.target.value);
-  };
+    const newValue = new BigNumber(e.target.value);
+    setTargetPrice(newValue);
 
-  const handleRemaining = (remaining) => {
-    setRemaining(remaining - 2);
+    // Update the basePrice when targetPrice changes
+    if (!newValue.isNaN() && !targetBaseExch.isNaN()) {
+      const calculatedValue = newValue
+        .multipliedBy(targetBaseExch)
+        .decimalPlaces(2);
+      setBasePrice(calculatedValue);
+    }
   };
 
   useEffect(() => {
-    // Update targetPrice when basePrice or exchangeRate changes
-    if (updateTargetPrice && basePrice !== "" && baseTargetExch !== "") {
-      const calculatedValue =
-        Math.round(basePrice * baseTargetExch * 100) / 100;
+    // Update targetPrice when basePrice or baseTargetExch changes
+    if (updateTargetPrice && !basePrice.isNaN() && !baseTargetExch.isNaN()) {
+      const calculatedValue = basePrice
+        .multipliedBy(baseTargetExch)
+        .decimalPlaces(2);
       setTargetPrice(calculatedValue);
     }
     // Reset the flag
-    setUpdateTargetPrice(true);
+    setUpdateTargetPrice(false); // Make sure to set it to `false` to prevent further updates
   }, [basePrice, baseTargetExch, updateTargetPrice]);
 
   useEffect(() => {
-    // Update basePrice when targetPrice or exchangeRate changes
-    if (updateBasePrice && targetPrice !== "" && targetBaseExch !== "") {
-      const calculatedValue =
-        Math.round(targetPrice * targetBaseExch * 100) / 100;
+    // Update basePrice when targetPrice or targetBaseExch changes
+    if (updateBasePrice && !targetPrice.isNaN() && !targetBaseExch.isNaN()) {
+      const calculatedValue = targetPrice
+        .multipliedBy(targetBaseExch)
+        .decimalPlaces(2);
       setBasePrice(calculatedValue);
     }
     // Reset the flag
-    setUpdateBasePrice(true);
+    setUpdateBasePrice(false); // Make sure to set it to `false` to prevent further updates
   }, [targetPrice, targetBaseExch, updateBasePrice]);
 
   useEffect(() => {
@@ -109,15 +126,25 @@ export default function Home() {
             baseSelection,
             targetSelection
           );
-          setBaseTargetExch(baseTargetExch);
-          setTargetBaseExch(targetBaseExch);
-          handleRemaining(remaining);
+          setBaseTargetExch(new BigNumber(baseTargetExch));
+          setTargetBaseExch(new BigNumber(targetBaseExch));
+          setRemaining((prevRemaining) => prevRemaining - 2);
 
-          if (basePrice === "" && targetPrice === "") {
-            setBasePrice(1);
-            setTargetPrice(Math.round(baseTargetExch * 100) / 100);
+          // Check if both basePrice and targetPrice are not equal to zero
+          if (!basePrice.isEqualTo(0) && !targetPrice.isEqualTo(0)) {
+            // Update only targetPrice to be basePrice * baseTargetExch
+            const updatedTargetPrice = basePrice
+              .multipliedBy(baseTargetExch)
+              .decimalPlaces(2);
+            setTargetPrice(updatedTargetPrice);
           } else {
-            setTargetPrice(Math.round(basePrice * baseTargetExch * 100) / 100);
+            // If either basePrice or targetPrice is zero, update them with initial values
+            const initialBasePrice = new BigNumber(1);
+            const initialTargetPrice = initialBasePrice
+              .multipliedBy(baseTargetExch)
+              .decimalPlaces(2);
+            setBasePrice(initialBasePrice);
+            setTargetPrice(initialTargetPrice);
           }
         } catch (error) {
           // Handle any errors that may occur during the fetch
@@ -160,18 +187,11 @@ export default function Home() {
             opposingValue={targetSelection}
             stateFunction={handleBaseSelection}
           />
-          <div className="flex flex-col items-center p-4">
-            {baseSelection in currenciesObject ? (
+          {baseSelection in currenciesObject && (
+            <div className="flex flex-col items-center p-2">
               <Flag label={baseSelection} />
-            ) : null}
-          </div>
-        </div>
-
-        <div className="flex items-center p-4 min-h-16">
-          <CurrencySwapButton
-            onSwap={handleCurrencySwap}
-            className="w-24 h-12"
-          />
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col items-center p-4 min-h-16">
@@ -181,30 +201,38 @@ export default function Home() {
             opposingValue={baseSelection}
             stateFunction={handleTargetSelection}
           />
-          <div className="flex flex-col items-center p-4">
-            {targetSelection in currenciesObject ? (
+          {targetSelection in currenciesObject && (
+            <div className="flex flex-col items-center p-2">
               <Flag label={targetSelection} />
-            ) : null}
-          </div>
+            </div>
+          )}
         </div>
       </div>
-      <div className="flex justify-around">
-        <div className="flex flex-col items-center p-4">
-          <PriceEntry
-            label="Base Price"
-            value={basePrice}
-            className="mb-4 mt-4"
-            onChange={handleBasePrice}
-          />
-        </div>
-        <div className="flex flex-col items-center p-4">
-          <PriceEntry
-            label="Target Price"
-            value={targetPrice}
-            className="mb-4 mt-4"
-            onChange={handleTargetPrice}
-          />
-        </div>
+
+      <div className="flex justify-center">
+        {!baseTargetExch.isEqualTo(0) && !targetBaseExch.isEqualTo(0) ? (
+          <>
+            <div className="flex flex-col items-center p-4 min-h-16">
+              <PriceEntry
+                label="Base Price"
+                value={basePrice}
+                className="mb-4 mt-4"
+                onChange={handleBasePrice}
+              />
+            </div>
+            <div className="flex items-center p-4 min-h-16">
+              <CurrencySwapButton onSwap={handleCurrencySwap} />
+            </div>
+            <div className="flex flex-col items-center p-4 min-h-16">
+              <PriceEntry
+                label="Target Price"
+                value={targetPrice}
+                className="mb-4 mt-4"
+                onChange={handleTargetPrice}
+              />
+            </div>
+          </>
+        ) : null}
       </div>
       <div className="flex justify-center">
         <Remaining remaining={remaining} />

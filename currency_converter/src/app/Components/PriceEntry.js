@@ -8,7 +8,7 @@ export default function PriceEntry(props) {
         inputMode="numeric"
         name={props.name}
         onChange={props.onChange}
-        className="w-full h-20 text-black text-5xl text-center"
+        className="h-20 text-black text-5xl text-center appearance-none w-full"
       />
     </>
   );
