@@ -23,6 +23,10 @@ export default function Home() {
 
   const [remaining, setRemaining] = useState("Loading...");
 
+  // State variables to control when each useEffect should run
+  const [updateBasePrice, setUpdateBasePrice] = useState(true);
+  const [updateTargetPrice, setUpdateTargetPrice] = useState(true);
+
   useEffect(() => {
     fetch("http://localhost:3001/remaining")
       .then((response) => {
@@ -41,6 +45,9 @@ export default function Home() {
 
   console.log(`baseSelection is: ${baseSelection}`);
   console.log(`targetSelection is: ${targetSelection}`);
+
+  console.log(`basePrice: ${basePrice}`);
+  console.log(`targetPrice: ${targetPrice}`);
 
   const handleBaseSelection = (e) => {
     setBaseSelection(e);
@@ -69,6 +76,28 @@ export default function Home() {
   };
 
   useEffect(() => {
+    // Update targetPrice when basePrice or exchangeRate changes
+    if (updateTargetPrice && basePrice !== "" && baseTargetExch !== "") {
+      const calculatedValue =
+        Math.round(basePrice * baseTargetExch * 100) / 100;
+      setTargetPrice(calculatedValue);
+    }
+    // Reset the flag
+    setUpdateTargetPrice(true);
+  }, [basePrice, baseTargetExch, updateTargetPrice]);
+
+  useEffect(() => {
+    // Update basePrice when targetPrice or exchangeRate changes
+    if (updateBasePrice && targetPrice !== "" && targetBaseExch !== "") {
+      const calculatedValue =
+        Math.round(targetPrice * targetBaseExch * 100) / 100;
+      setBasePrice(calculatedValue);
+    }
+    // Reset the flag
+    setUpdateBasePrice(true);
+  }, [targetPrice, targetBaseExch, updateBasePrice]);
+
+  useEffect(() => {
     const fetchExchangeData = async () => {
       if (
         baseSelection !== "--Select a Currency--" &&
@@ -83,6 +112,13 @@ export default function Home() {
           setBaseTargetExch(baseTargetExch);
           setTargetBaseExch(targetBaseExch);
           handleRemaining(remaining);
+
+          if (basePrice === "" && targetPrice === "") {
+            setBasePrice(1);
+            setTargetPrice(Math.round(baseTargetExch * 100) / 100);
+          } else {
+            setTargetPrice(Math.round(basePrice * baseTargetExch * 100) / 100);
+          }
         } catch (error) {
           // Handle any errors that may occur during the fetch
           console.error(error);
@@ -156,7 +192,6 @@ export default function Home() {
         <div className="flex flex-col items-center p-4">
           <PriceEntry
             label="Base Price"
-            id="base"
             value={basePrice}
             className="mb-4 mt-4"
             onChange={handleBasePrice}
@@ -165,7 +200,6 @@ export default function Home() {
         <div className="flex flex-col items-center p-4">
           <PriceEntry
             label="Target Price"
-            id="target"
             value={targetPrice}
             className="mb-4 mt-4"
             onChange={handleTargetPrice}
