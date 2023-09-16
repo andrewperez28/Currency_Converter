@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
+import Header from "./Components/Header";
 import CurrencySwapButton from "./Components/CurrencySwap";
 import Dropdown from "./Components/Dropdown";
 import PriceEntry from "./Components/PriceEntry";
 import Flag from "./Components/Flag";
 import Remaining from "./Components/Remaining";
+import Disclaimer from "./Components/Disclaimer";
 import currencies from "./Objects/currencies";
 import getExchange from "./Scripts/getExchange.mjs";
 import BigNumber from "bignumber.js";
@@ -161,23 +163,7 @@ export default function Home() {
 
   return (
     <>
-      <header>
-        <div className="flex justify-center">
-          <h1 className="text-8xl p-4">Currency Converter</h1>
-        </div>
-      </header>
-
-      <div className="flex justify-center">
-        <div className="text-center">
-          <h2 className="text-4xl p-4">
-            Welcome to the currency converter website!{" "}
-          </h2>
-          <h3 className="text-3xl p-4">
-            Please choose a base currency and a target currency to be used for
-            conversion. Then enter your prices in at least one input box.
-          </h3>
-        </div>
-      </div>
+      <Header />
 
       <div className="flex justify-around">
         <div className="flex flex-col items-center p-4 min-h-16">
@@ -234,11 +220,13 @@ export default function Home() {
           </>
         ) : null}
       </div>
-      <div className="flex justify-center">
+      <div className="flex justify-center p-4 mt-4 mb-4">
         <Remaining remaining={remaining} />
       </div>
-
-      <footer className="mt-auto flex justify-center text-1xl">
+      <div className="justify-center">
+        <Disclaimer />
+      </div>
+      <footer className="flex justify-center text-1xl p-4 mt-4 mb-4">
         © 2023 Andrew Perez
       </footer>
     </>
