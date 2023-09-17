@@ -1,5 +1,5 @@
 import Freecurrencyapi from "@everapi/freecurrencyapi-js";
-import express from "express";
+import express, { response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 const envStatus = dotenv.config();
@@ -17,14 +17,36 @@ const freecurrencyapi = new Freecurrencyapi(apiKey);
 app.use(cors());
 
 app.get("/remaining", async (req, res) => {
+  let response; // Declare response in a higher scope
+
   try {
-    const response = await freecurrencyapi.status(apiKey);
+    response = await freecurrencyapi.status(apiKey);
+
+    if (response.message !== undefined) {
+      console.log(
+        "There's been an error with the freecurrencyapi API: ",
+        response.message
+      );
+    }
+
     const numRemaining = response.quotas.month.remaining;
     console.log("numRemaining:", numRemaining);
     res.json({ remaining: numRemaining });
   } catch (error) {
-    console.error(`ERROR: ${error}`);
-    res.status(500).json({ error: "Internal Server Error " });
+    if (
+      response &&
+      response.message ===
+        "Internal Server Error - let us know: support@freecurrencyapi.com"
+    ) {
+      res.status(500).json({ error: response.message });
+    } else if (
+      response &&
+      response.message === "Invalid authentication credentials"
+    ) {
+      res.status(401).json({ error: response.message });
+    } else {
+      res.status(500).json({ error: "Error with backend" });
+    }
   }
 });
 

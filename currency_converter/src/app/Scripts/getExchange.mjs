@@ -15,7 +15,7 @@ export default function getExchange(currentBase, currentTarget) {
     )
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Error with backend");
+          throw new Error("Error with backend: ", response.ok);
         }
         return response.json();
       })

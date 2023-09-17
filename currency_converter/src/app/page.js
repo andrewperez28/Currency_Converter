@@ -10,10 +10,14 @@ import Disclaimer from "./Components/Disclaimer";
 import currencies from "./Objects/currencies";
 import getExchange from "./Scripts/getExchange.mjs";
 import BigNumber from "bignumber.js";
+import APIDown from "./Components/APIDown";
+import NoMoreRequests from "./Components/NoMoreRequests";
+import StatusIcon from "./Components/StatusIcon";
 
 export default function Home() {
   const currenciesObject = currencies();
   console.log("----------------PARENT COMPONENT RENDERED!!!!--------------");
+  const [apiStatus, setApiStatus] = useState("OK");
   const [baseSelection, setBaseSelection] = useState("--Select a Currency--");
   const [targetSelection, setTargetSelection] = useState(
     "--Select a Currency--"
@@ -34,23 +38,21 @@ export default function Home() {
     fetch("http://localhost:3001/remaining")
       .then((response) => {
         if (!response.ok) {
+          setApiStatus("OFFLINE - API DOWN");
           throw new Error("Error with backend");
         }
         return response.json();
       })
       .then((response) => {
+        if (response.remaining === 0) {
+          setApiStatus("OFFLINE - NO MORE REQUESTS");
+        }
         setRemaining(response.remaining); // Set the remaining value in the state
       })
       .catch((error) => {
         console.error("Error: ", error);
       });
   }, []); // Empty dependency array to fetch once on component mount
-
-  console.log(`baseSelection is: ${baseSelection}`);
-  console.log(`targetSelection is: ${targetSelection}`);
-
-  console.log(`basePrice: ${basePrice}`);
-  console.log(`targetPrice: ${targetPrice}`);
 
   const handleBaseSelection = (e) => {
     setBaseSelection(e);
@@ -158,11 +160,55 @@ export default function Home() {
     fetchExchangeData();
   }, [baseSelection, targetSelection]);
 
-  console.log("baseTargetExch: ", baseTargetExch);
-  console.log("targetBaseExch: ", targetBaseExch);
+  if (apiStatus === "OFFLINE - API DOWN") {
+    return (
+      <>
+        <div className="flex items-start justify-start">
+          <StatusIcon status={apiStatus} />
+        </div>
+        <Header />
+        <div className="flex justify-center">
+          <APIDown />
+        </div>
+
+        <div className="justify-center p-4 mt-4 mb-4">
+          <Disclaimer />
+        </div>
+
+        <footer className="flex justify-center text-1xl p-4 mt-4 mb-4">
+          © 2023 Andrew Perez
+        </footer>
+      </>
+    );
+  }
+
+  if (apiStatus === "OFFLINE - NO MORE REQUESTS") {
+    return (
+      <>
+        <div className="flex items-start justify-start">
+          <StatusIcon status={apiStatus} />
+        </div>
+        <Header />
+        <div className="flex justify-center">
+          <NoMoreRequests />
+        </div>
+
+        <div className="justify-center p-4 mt-4 mb-4">
+          <Disclaimer />
+        </div>
+
+        <footer className="flex justify-center text-1xl p-4 mt-4 mb-4">
+          © 2023 Andrew Perez
+        </footer>
+      </>
+    );
+  }
 
   return (
     <>
+      <div className="flex items-start justify-start">
+        <StatusIcon status={apiStatus} />
+      </div>
       <Header />
 
       <div className="flex justify-around">
@@ -223,7 +269,7 @@ export default function Home() {
       <div className="flex justify-center p-4 mt-4 mb-4">
         <Remaining remaining={remaining} />
       </div>
-      <div className="justify-center">
+      <div className="justify-center p-4 mt-4 mb-4">
         <Disclaimer />
       </div>
       <footer className="flex justify-center text-1xl p-4 mt-4 mb-4">
