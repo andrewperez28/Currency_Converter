@@ -21,7 +21,7 @@ export default function Dropdown(props) {
         onChange={(e) => {
           handleDropSelection(e);
         }}
-        className="text-black mx-auto p-2 mb-4 text-4xl"
+        className="mx-auto p-2 mb-4 text-4xl border-black border-2 dark:text-white-500"
       >
         <option value={null} className="text-center">
           --Select a Currency--

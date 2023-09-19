@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import Header from "./Components/Header";
+import Providers from "./providers";
+import ThemeSwitcher from "./Components/ThemeSwitcher";
 import CurrencySwapButton from "./Components/CurrencySwap";
 import Dropdown from "./Components/Dropdown";
 import PriceEntry from "./Components/PriceEntry";
@@ -163,8 +165,13 @@ export default function Home() {
   if (apiStatus === "OFFLINE - API DOWN") {
     return (
       <>
-        <div className="flex items-start justify-start">
+        <div className="flex items-start justify-between">
           <StatusIcon status={apiStatus} />
+          <div className="flex">
+            <Providers>
+              <ThemeSwitcher />
+            </Providers>
+          </div>
         </div>
         <Header />
         <div className="flex justify-center">
@@ -185,8 +192,13 @@ export default function Home() {
   if (apiStatus === "OFFLINE - NO MORE REQUESTS") {
     return (
       <>
-        <div className="flex items-start justify-start">
+        <div className="flex items-start justify-between">
           <StatusIcon status={apiStatus} />
+          <div className="flex">
+            <Providers>
+              <ThemeSwitcher />
+            </Providers>
+          </div>
         </div>
         <Header />
         <div className="flex justify-center">
@@ -206,12 +218,17 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex items-start justify-start">
+      <div className="flex items-start justify-between">
         <StatusIcon status={apiStatus} />
+        <div className="flex">
+          <Providers>
+            <ThemeSwitcher />
+          </Providers>
+        </div>
       </div>
       <Header />
 
-      <div className="flex justify-around">
+      <div className="flex justify-evenly">
         <div className="flex flex-col items-center p-4 min-h-16">
           <Dropdown
             label="Base Currency"
@@ -219,6 +236,7 @@ export default function Home() {
             opposingValue={targetSelection}
             stateFunction={handleBaseSelection}
           />
+
           {baseSelection in currenciesObject && (
             <div className="flex flex-col items-center p-2">
               <Flag label={baseSelection} />

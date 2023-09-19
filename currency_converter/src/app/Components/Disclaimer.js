@@ -2,9 +2,9 @@ export default function Disclaimer() {
   return (
     <>
       <h2>
-        <bold>
+        <strong>
           <i>Disclaimer</i>
-        </bold>
+        </strong>
       </h2>
       <li>
         This website relies on the{" "}
