@@ -8,12 +8,14 @@ export default function Flag(props) {
 
   return (
     <>
-      <Image
-        src={`/Images/${flagOption}-flag-medium.jpg`}
-        width={400}
-        height={400}
-        alt={`Flag of ${flagOption}`}
-      />
+      <div className="border-black border-2">
+        <Image
+          src={`/Images/${flagOption}-flag-medium.jpg`}
+          width={400}
+          height={400}
+          alt={`Flag of ${flagOption}`}
+        />
+      </div>
     </>
   );
 }

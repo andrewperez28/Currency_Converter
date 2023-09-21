@@ -1,4 +1,8 @@
 "use client";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import ToggleOnIcon from "@mui/icons-material/ToggleOn";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 
@@ -14,22 +18,23 @@ export default function ThemeSwitcher() {
     return null;
   }
 
-  const borderColor = theme === "dark" ? "border-white" : "border-black";
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
 
   return (
-    <div>
-      <button
-        className={`dark:${borderColor} border-2 p-2 m-2`}
-        onClick={() => setTheme("light")}
-      >
-        Light Mode
-      </button>
-      <button
-        className={`dark:${borderColor} border-2 p-2 m-2`}
-        onClick={() => setTheme("dark")}
-      >
-        Dark Mode
-      </button>
+    <div className="flex items-center space-x-2">
+      <LightModeIcon />
+      {theme === "light" ? (
+        <>
+          <ToggleOffIcon onClick={toggleTheme} />
+        </>
+      ) : (
+        <>
+          <ToggleOnIcon onClick={toggleTheme} />
+        </>
+      )}
+      <DarkModeIcon />
     </div>
   );
 }

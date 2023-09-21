@@ -236,7 +236,6 @@ export default function Home() {
             opposingValue={targetSelection}
             stateFunction={handleBaseSelection}
           />
-
           {baseSelection in currenciesObject && (
             <div className="flex flex-col items-center p-2">
               <Flag label={baseSelection} />
