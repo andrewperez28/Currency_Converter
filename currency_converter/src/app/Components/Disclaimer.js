@@ -16,10 +16,11 @@ export default function Disclaimer() {
         API in order to receive currency exchange rates.
       </li>
       <li>
-        Only 5000 requests are allowed on this website due to the use of the
-        free tier of the freecurrency.com API. Selecting new currency and
-        swapping currencies both count as a 2 requests. Once the API is called,
-        the number of requests will update in real time.
+        Only 5000 requests and 10 requests per minute are allowed on this
+        website due to the use of the free tier of the freecurrency.com API.
+        Selecting new currency and swapping currencies both count as a 2
+        requests. Once the API is called, the number of requests will update in
+        real time.
       </li>
       <li>
         When the number of requests remaining reaches 0, the website will not be
